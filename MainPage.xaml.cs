@@ -48,6 +48,24 @@ namespace TaskManagerApp
             DataAccess.AddData(Input_Box.Text);
             LoadData();
         }
+
+        private void MarkAsComplete_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            string task = button.DataContext as string;
+            // Update the task's completion status (e.g., by appending a marker to indicate completion)
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            string task = button.DataContext as string;
+            
+            Tasks.Remove(task); // Assuming Tasks is an ObservableCollection<string>
+            DataAccess.DeleteData(task); // Call the DeleteData method in DataAccess.cs
+        }
+
+
     }
 }
 

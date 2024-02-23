@@ -16,10 +16,15 @@
             <ListView Name="Output" ItemsSource="{x:Bind Tasks}" Height="100">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                            <Button Content="Complete" Click="MarkAsComplete_Click" Margin="5"/>
+                            <Button Content="Delete" Click="Delete_Click" Margin="5"/>
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            
         </StackPanel>
     </Grid>
 

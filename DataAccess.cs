@@ -78,5 +78,40 @@ namespace TaskManagerApp
 
             return entries;
         }
+
+        public static void DeleteData(string taskName)
+        {
+            string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "TaskManager.db");
+            using (SqliteConnection db = new SqliteConnection($"Filename={dbpath}"))
+            {
+                db.Open();
+
+                SqliteCommand deleteCommand = new SqliteCommand();
+                deleteCommand.Connection = db;
+
+                deleteCommand.CommandText = "DELETE FROM Tasks WHERE TaskName = @TaskName;";
+                deleteCommand.Parameters.AddWithValue("@TaskName", taskName);
+
+                deleteCommand.ExecuteNonQuery();
+            }
+        }
+
+        public static void MarkAsComplete(string taskName)
+        {
+            string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "TaskManager.db");
+            using (SqliteConnection db = new SqliteConnection($"Filename={dbpath}"))
+            {
+                db.Open();
+
+                SqliteCommand updateCommand = new SqliteCommand();
+                updateCommand.Connection = db;
+
+                updateCommand.CommandText = "UPDATE Tasks SET IsComplete = 1 WHERE TaskName = @TaskName;";
+                updateCommand.Parameters.AddWithValue("@TaskName", taskName);
+
+                updateCommand.ExecuteNonQuery();
+            }
+        }
+
     }
 }
