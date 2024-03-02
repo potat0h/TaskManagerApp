@@ -17,15 +17,6 @@
                     <SymbolIcon Symbol="Add" />
                 </Button>
 
-                <!-- Trash Icon to Delete Tasks -->
-                <Button Click="ToggleDeleteMode" Margin="5" Width="100" Height="40">
-                    <SymbolIcon Symbol="Delete" />
-                </Button>
-
-                <!-- Edit Icon to Edit Tasks -->
-                <Button Click="OpenEditTaskDialog" Margin="5" Width="100" Height="40">
-                    <SymbolIcon Symbol="Edit" />
-                </Button>
             </StackPanel>
 
             <!-- Main Task List -->
@@ -35,8 +26,19 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding TaskName}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding TaskName}" VerticalAlignment="Center" TextWrapping="Wrap" Width="1630"/>
                             <Button Content="View Deadline" Click="ViewDeadline_Click" Tag="{Binding Deadline}" Margin="5"/>
+                            <Button Click="MarkAsComplete_Click" DataContext="{Binding}" Margin="5">
+                                <SymbolIcon Symbol="Accept" />
+                            </Button>
+                            <Button Click="Edit_Click" HorizontalAlignment="Right" Margin="5">
+                                <SymbolIcon Symbol="Edit" />
+                            </Button>
+                            <Button Click="Delete_Click" DataContext="{Binding}" Margin="5">
+                                <SymbolIcon Symbol="Delete" />
+                            </Button>
+                            
+
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -50,17 +52,18 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:Task">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind TaskName}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{x:Bind Deadline, Converter={StaticResource DateTimeOffsetToStringConverter}}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind TaskName}" VerticalAlignment="Center" TextWrapping="Wrap" Width="1630"/>
+                            <Button Content="View Deadline" Click="ViewDeadline_Click" Tag="{Binding Deadline}" Margin="5"/>
+                            <Button Click="Edit_Click" HorizontalAlignment="Right" Margin="5">
+                                <SymbolIcon Symbol="Edit" />
+                            </Button>
+                            <Button Click="Delete_Click" DataContext="{Binding}" Margin="5">
+                                <SymbolIcon Symbol="Delete" />
+                            </Button>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-
-            <!-- Delete Button -->
-            <Button x:Name="DeleteButton" Click="DeleteSelectedTasks" Visibility="Collapsed" Margin="5" Width="100" Height="40">
-                <TextBlock>Delete</TextBlock>
-            </Button>
         </StackPanel>
     </Grid>
 

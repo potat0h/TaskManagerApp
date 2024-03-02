@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI;
 
 
 namespace TaskManagerApp
@@ -23,8 +24,6 @@ namespace TaskManagerApp
     {
         public ObservableCollection<Task> Tasks { get; set; }
         public ObservableCollection<Task> CompletedTasks { get; set; }
-        private bool deleteMode = false;
-
         public MainPage()
         {
             this.InitializeComponent();
@@ -77,8 +76,15 @@ namespace TaskManagerApp
 
             TimePicker deadlineTimePicker = new TimePicker
             {
-                Header = "Select time", // Set header text as a hint for the user
-                ClockIdentifier = "24HourClock"
+                Header = "Select time" // Set header text as a hint for the user
+            };
+
+            // Create a text block for displaying error messages
+            TextBlock errorTextBlock = new TextBlock
+            {
+                Text = string.Empty, // Initially empty
+                Foreground = new SolidColorBrush(Colors.Red), // Set error message color to red
+                TextWrapping = TextWrapping.Wrap // Enable text wrapping
             };
 
             // Add controls to the content dialog
@@ -86,27 +92,31 @@ namespace TaskManagerApp
             panel.Children.Add(taskNameTextBox);
             panel.Children.Add(deadlineDatePicker);
             panel.Children.Add(deadlineTimePicker);
+            panel.Children.Add(errorTextBlock); // Add error text block
+
             addTaskDialog.Content = panel;
 
             // Handle dialog buttons
             addTaskDialog.PrimaryButtonClick += async (s, args) =>
             {
+                DateTime deadline = deadlineDatePicker.Date.Date;
+                if (deadlineTimePicker.SelectedTime.HasValue)
+                {
+                    TimeSpan selectedTime = deadlineTimePicker.SelectedTime.Value;
+                    deadline = deadline.Add(selectedTime);
+                }
+
                 // Validate task name
                 if (string.IsNullOrWhiteSpace(taskNameTextBox.Text))
                 {
-                    // Show error message if task name is empty
-                    var errorDialog = new ContentDialog
-                    {
-                        Title = "Error",
-                        Content = "Please enter a task name.",
-                        CloseButtonText = "OK"
-                    };
-                    await errorDialog.ShowAsync();
+                    // Set error message below the text box
+                    errorTextBlock.Text = "Please enter a task name.";
+                    args.Cancel = true; // Prevent dialog from closing
                     return;
                 }
 
                 // Combine date and time into a single DateTime
-                DateTime deadline = deadlineDatePicker.Date.Date + deadlineTimePicker.Time;
+                deadline = deadlineDatePicker.Date.Date + deadlineTimePicker.Time;
 
                 // Add the task to the database
                 DataAccess.AddData(taskNameTextBox.Text, deadline);
@@ -115,19 +125,18 @@ namespace TaskManagerApp
                 LoadData();
             };
 
-            
             // Show the dialog
             await addTaskDialog.ShowAsync();
         }
 
 
-        private async void OpenEditTaskDialog(object sender, RoutedEventArgs e)
+
+        private async void Edit_Click(object sender, RoutedEventArgs e)
         {
             // Get the task to edit from the sender (assuming sender is a Button)
             Button editButton = sender as Button;
             Task taskToEdit = editButton.DataContext as Task;
 
-            // Check if a task is selected
             if (taskToEdit == null)
             {
                 // Show error message if no task is selected
@@ -162,10 +171,17 @@ namespace TaskManagerApp
                 Header = "Select deadline" // Set header text as a hint for the user
             };
 
+            TimePicker deadlineTimePicker = new TimePicker
+            {
+                Header = "Select time", // Set header text as a hint for the user
+                ClockIdentifier = "24HourClock"
+            };
+
             // Add controls to the content dialog
             StackPanel panel = new StackPanel();
             panel.Children.Add(taskNameTextBox);
             panel.Children.Add(deadlineDatePicker);
+            panel.Children.Add(deadlineTimePicker);
             editTaskDialog.Content = panel;
 
             // Handle dialog buttons
@@ -199,6 +215,8 @@ namespace TaskManagerApp
             await editTaskDialog.ShowAsync();
         }
 
+        
+
         private async void ViewDeadline_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -223,44 +241,42 @@ namespace TaskManagerApp
             }
         }
 
-        private void ToggleDeleteMode(object sender, RoutedEventArgs e)
+        private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            deleteMode = !deleteMode; // Toggle deletion mode
+            Button button = sender as Button;
+            Task task = button.DataContext as Task;
 
-            if (deleteMode)
-            {
-                // Show checkboxes and delete button
-                DeleteButton.Visibility = Visibility.Visible;
-            }
+            if (task.IsComplete == 0)
+                Tasks.Remove(task);
             else
-            {
-                // Hide checkboxes and delete button
-                DeleteButton.Visibility = Visibility.Collapsed;
-            }
+                CompletedTasks.Remove(task);
+
+            DataAccess.DeleteData(task.TaskName);
         }
 
-        private void DeleteSelectedTasks(object sender, RoutedEventArgs e)
+        private void MarkAsComplete_Click(object sender, RoutedEventArgs e)
         {
-            // Remove completed tasks from the Tasks collection
-            for (int i = Tasks.Count - 1; i >= 0; i--)
-            {
-                if (Tasks[i].IsComplete == 1)
-                {
-                    DataAccess.DeleteData(Tasks[i].TaskName); // Delete task from the database
-                    Tasks.RemoveAt(i); // Remove task from the Tasks collection
-                }
-            }
+            Button button = sender as Button;
+            // Update the task's completion status (e.g., by appending a marker to indicate completion)
+            Task task = button.DataContext as Task;
 
-            // Remove completed tasks from the CompletedTasks collection
-            for (int i = CompletedTasks.Count - 1; i >= 0; i--)
+            if (task.IsComplete == 0)
             {
-                if (CompletedTasks[i].IsComplete == 1)
-                {
-                    DataAccess.DeleteData(CompletedTasks[i].TaskName); // Delete task from the database
-                    CompletedTasks.RemoveAt(i); // Remove task from the CompletedTasks collection
-                }
+                task.IsComplete = 1;
+                CompletedTasks.Add(task);
+                Tasks.Remove(task);
+                DataAccess.MarkAsComplete(task.TaskName);
             }
         }
+
+
+
+
+
+
+
+
+
 
 
 

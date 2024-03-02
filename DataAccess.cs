@@ -49,7 +49,7 @@ namespace TaskManagerApp
 
                 insertCommand.CommandText = "INSERT INTO Tasks (TaskName, Deadline, IsComplete) VALUES (@TaskName, @Deadline, @IsComplete);";
                 insertCommand.Parameters.AddWithValue("@TaskName", taskName);
-                // Check if formattedDeadline is null before assigning a value
+   
                 insertCommand.Parameters.AddWithValue("@Deadline", formattedDeadline != null ? (object)formattedDeadline : DBNull.Value);
                 insertCommand.Parameters.AddWithValue("@IsComplete", isComplete ? 1 : 0);
 
@@ -128,9 +128,12 @@ namespace TaskManagerApp
                 SqliteCommand updateCommand = new SqliteCommand();
                 updateCommand.Connection = db;
 
+                // Format deadline to ISO 8601 format
+                string formattedDeadline = deadline?.ToString("yyyy-MM-dd HH:mm:ss");
+
                 updateCommand.CommandText = "UPDATE Tasks SET TaskName = @TaskName, Deadline = @Deadline WHERE Id = @TaskId;";
                 updateCommand.Parameters.AddWithValue("@TaskName", taskName);
-                updateCommand.Parameters.AddWithValue("@Deadline", deadline.HasValue ? deadline.Value.Date : (object)DBNull.Value);
+                updateCommand.Parameters.AddWithValue("@Deadline", formattedDeadline != null ? (object)formattedDeadline : DBNull.Value);
                 updateCommand.Parameters.AddWithValue("@TaskId", taskId);
 
                 updateCommand.ExecuteNonQuery();
