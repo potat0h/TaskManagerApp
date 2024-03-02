@@ -11,6 +11,7 @@ namespace TaskManagerApp
         public int Id { get; set; }
         public string TaskName { get; set; }
         public int IsComplete { get; set; }
+        public DateTime Deadline { get; set; }
     }
 }
 

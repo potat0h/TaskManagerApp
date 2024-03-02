@@ -10,36 +10,60 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
-            <TextBox Name="Input_Box"></TextBox>
-            <Button Click="AddData">Add</Button>
+        <StackPanel Orientation="Vertical">
+            <!-- Add Task Button -->
+            <StackPanel Orientation="Horizontal">
+                <Button Click="OpenAddTaskDialog" Margin="5" Width="100" Height="40">
+                    <SymbolIcon Symbol="Add" />
+                </Button>
 
-            <!-- Display Incomplete Tasks -->
-            <ListView Name="Output" ItemsSource="{Binding Tasks}" Height="100">
+                <!-- Trash Icon to Delete Tasks -->
+                <Button Click="ToggleDeleteMode" Margin="5" Width="100" Height="40">
+                    <SymbolIcon Symbol="Delete" />
+                </Button>
+
+                <!-- Edit Icon to Edit Tasks -->
+                <Button Click="OpenEditTaskDialog" Margin="5" Width="100" Height="40">
+                    <SymbolIcon Symbol="Edit" />
+                </Button>
+            </StackPanel>
+
+            <!-- Main Task List -->
+            <TextBlock Text="Incomplete Tasks" FontWeight="Bold" Margin="5" />
+            <ListView Name="Output" ItemsSource="{Binding Tasks}" Height="463">
+                <!-- Task Template -->
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding TaskName}" VerticalAlignment="Center"/>
-                            <Button Content="Complete" Click="MarkAsComplete_Click" Margin="5"/>
-                            <Button Content="Delete" Click="Delete_Click" Margin="5"/>
+                            <Button Content="View Deadline" Click="ViewDeadline_Click" Tag="{Binding Deadline}" Margin="5"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+            <!-- Completed Task List -->
+            <TextBlock Text="Completed Tasks" FontWeight="Bold" Margin="5" />
+            <ListView x:Name="CompletedOutput" ItemsSource="{Binding CompletedTasks}" Height="508">
+                <!-- Completed Task Template -->
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:Task">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind TaskName}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind Deadline, Converter={StaticResource DateTimeOffsetToStringConverter}}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
 
-            <!-- Display Completed Tasks -->
-            <ListView Name="CompletedOutput" ItemsSource="{Binding CompletedTasks}" Height="100">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding TaskName}" VerticalAlignment="Center"/>
-                            <!-- You can add additional buttons or controls if needed -->
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <!-- Delete Button -->
+            <Button x:Name="DeleteButton" Click="DeleteSelectedTasks" Visibility="Collapsed" Margin="5" Width="100" Height="40">
+                <TextBlock>Delete</TextBlock>
+            </Button>
         </StackPanel>
     </Grid>
+
 
 
 
