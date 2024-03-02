@@ -13,19 +13,34 @@
         <StackPanel>
             <TextBox Name="Input_Box"></TextBox>
             <Button Click="AddData">Add</Button>
-            <ListView Name="Output" ItemsSource="{x:Bind Tasks}" Height="100">
+
+            <!-- Display Incomplete Tasks -->
+            <ListView Name="Output" ItemsSource="{Binding Tasks}" Height="100">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding TaskName}" VerticalAlignment="Center"/>
                             <Button Content="Complete" Click="MarkAsComplete_Click" Margin="5"/>
                             <Button Content="Delete" Click="Delete_Click" Margin="5"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            
+
+            <!-- Display Completed Tasks -->
+            <ListView Name="CompletedOutput" ItemsSource="{Binding CompletedTasks}" Height="100">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding TaskName}" VerticalAlignment="Center"/>
+                            <!-- You can add additional buttons or controls if needed -->
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackPanel>
     </Grid>
+
+
 
 </Page>

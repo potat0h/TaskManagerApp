@@ -21,14 +21,17 @@ namespace TaskManagerApp
 {
     public sealed partial class MainPage : Page
     {
-
-        public ObservableCollection<string> Tasks { get; set; }
+        public ObservableCollection<Task> Tasks { get; set; }
+        public ObservableCollection<Task> CompletedTasks { get; set; }
 
         public MainPage()
         {
             this.InitializeComponent();
-            Tasks = new ObservableCollection<string>();
+            DataContext = this;
+            Tasks = new ObservableCollection<Task>();
+            CompletedTasks = new ObservableCollection<Task>();
             Output.ItemsSource = Tasks;
+            CompletedOutput.ItemsSource = CompletedTasks;
             DataAccess.InitializeDatabase();
             LoadData();
         }
@@ -36,10 +39,14 @@ namespace TaskManagerApp
         private void LoadData()
         {
             Tasks.Clear();
+            CompletedTasks.Clear();
             var data = DataAccess.GetData();
             foreach (var task in data)
             {
-                Tasks.Add(task);
+                if (task.IsComplete == 0)
+                    Tasks.Add(task);
+                else
+                    CompletedTasks.Add(task);
             }
         }
 
@@ -52,17 +59,28 @@ namespace TaskManagerApp
         private void MarkAsComplete_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            string task = button.DataContext as string;
-            // Update the task's completion status (e.g., by appending a marker to indicate completion)
+            Task task = button.DataContext as Task;
+
+            if (task.IsComplete == 0)
+            {
+                task.IsComplete = 1;
+                CompletedTasks.Add(task);
+                Tasks.Remove(task);
+                DataAccess.MarkAsComplete(task.TaskName);
+            }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            string task = button.DataContext as string;
-            
-            Tasks.Remove(task); // Assuming Tasks is an ObservableCollection<string>
-            DataAccess.DeleteData(task); // Call the DeleteData method in DataAccess.cs
+            Task task = button.DataContext as Task;
+
+            if (task.IsComplete == 0)
+                Tasks.Remove(task);
+            else
+                CompletedTasks.Remove(task);
+
+            DataAccess.DeleteData(task.TaskName);
         }
 
 

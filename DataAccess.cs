@@ -24,7 +24,7 @@ namespace TaskManagerApp
                 CREATE TABLE IF NOT EXISTS Tasks (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     TaskName NVARCHAR(2048) NOT NULL,
-                    IsComplete INTEGER NOT NULL
+                    IsComplete INTEGER NOT NULL DEFAULT 0
                 )";
 
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
@@ -55,28 +55,31 @@ namespace TaskManagerApp
 
         }
 
-        public static List<string> GetData()
+        public static List<Task> GetData()
         {
-            List<string> entries = new List<string>();
+            List<Task> tasks = new List<Task>();
 
             string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "TaskManager.db");
-            using (SqliteConnection db =
-                new SqliteConnection($"Filename={dbpath}"))
+            using (SqliteConnection db = new SqliteConnection($"Filename={dbpath}"))
             {
                 db.Open();
 
-                SqliteCommand selectCommand = new SqliteCommand
-                    ("SELECT TaskName FROM Tasks", db);
+                SqliteCommand selectCommand = new SqliteCommand("SELECT * FROM Tasks", db);
 
                 SqliteDataReader query = selectCommand.ExecuteReader();
 
                 while (query.Read())
                 {
-                    entries.Add(query.GetString(0));
+                    tasks.Add(new Task
+                    {
+                        Id = query.GetInt32(0),
+                        TaskName = query.GetString(1),
+                        IsComplete = query.GetInt32(2)
+                    });
                 }
             }
 
-            return entries;
+            return tasks;
         }
 
         public static void DeleteData(string taskName)
