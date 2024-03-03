@@ -76,7 +76,8 @@ namespace TaskManagerApp
 
             TimePicker deadlineTimePicker = new TimePicker
             {
-                Header = "Select time" // Set header text as a hint for the user
+                Header = "Select time", // Set header text as a hint for the user
+                ClockIdentifier = "24HourClock" // Use 24-hour format
             };
 
             // Create a text block for displaying error messages

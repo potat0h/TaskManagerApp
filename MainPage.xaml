@@ -21,7 +21,7 @@
 
             <!-- Main Task List -->
             <TextBlock Text="Incomplete Tasks" FontWeight="Bold" Margin="5" />
-            <ListView Name="Output" ItemsSource="{Binding Tasks}" Height="463">
+            <ListView BorderBrush="White" BorderThickness="2" Name="Output" ItemsSource="{Binding Tasks}" Height="463">
                 <!-- Task Template -->
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -37,8 +37,6 @@
                             <Button Click="Delete_Click" DataContext="{Binding}" Margin="5">
                                 <SymbolIcon Symbol="Delete" />
                             </Button>
-                            
-
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -47,7 +45,7 @@
 
             <!-- Completed Task List -->
             <TextBlock Text="Completed Tasks" FontWeight="Bold" Margin="5" />
-            <ListView x:Name="CompletedOutput" ItemsSource="{Binding CompletedTasks}" Height="508">
+            <ListView BorderBrush="White" BorderThickness="2" x:Name="CompletedOutput" ItemsSource="{Binding CompletedTasks}" Height="436">
                 <!-- Completed Task Template -->
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:Task">
