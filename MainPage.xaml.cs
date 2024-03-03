@@ -99,13 +99,6 @@ namespace TaskManagerApp
             // Handle dialog buttons
             addTaskDialog.PrimaryButtonClick += async (s, args) =>
             {
-                DateTime deadline = deadlineDatePicker.Date.Date;
-                if (deadlineTimePicker.SelectedTime.HasValue)
-                {
-                    TimeSpan selectedTime = deadlineTimePicker.SelectedTime.Value;
-                    deadline = deadline.Add(selectedTime);
-                }
-
                 // Validate task name
                 if (string.IsNullOrWhiteSpace(taskNameTextBox.Text))
                 {
@@ -116,7 +109,12 @@ namespace TaskManagerApp
                 }
 
                 // Combine date and time into a single DateTime
-                deadline = deadlineDatePicker.Date.Date + deadlineTimePicker.Time;
+                DateTime deadline = deadlineDatePicker.Date.Date;
+                if (deadlineTimePicker.SelectedTime.HasValue)
+                {
+                    deadline = deadline.Date + deadlineTimePicker.SelectedTime.Value;
+                }
+
 
                 // Add the task to the database
                 DataAccess.AddData(taskNameTextBox.Text, deadline);
@@ -128,6 +126,7 @@ namespace TaskManagerApp
             // Show the dialog
             await addTaskDialog.ShowAsync();
         }
+
 
 
 
@@ -158,7 +157,7 @@ namespace TaskManagerApp
                 CloseButtonText = "Cancel"
             };
 
-            // Create controls for editing task name and deadline
+            // Create controls for editing task name, date, and time
             TextBox taskNameTextBox = new TextBox
             {
                 Text = taskToEdit.TaskName,
@@ -174,7 +173,15 @@ namespace TaskManagerApp
             TimePicker deadlineTimePicker = new TimePicker
             {
                 Header = "Select time", // Set header text as a hint for the user
-                ClockIdentifier = "24HourClock"
+                ClockIdentifier = "24HourClock" // Use 24-hour format
+            };
+
+            // Create a text block for displaying error messages
+            TextBlock errorTextBlock = new TextBlock
+            {
+                Text = string.Empty, // Initially empty
+                Foreground = new SolidColorBrush(Colors.Red), // Set error message color to red
+                TextWrapping = TextWrapping.Wrap // Enable text wrapping
             };
 
             // Add controls to the content dialog
@@ -182,6 +189,7 @@ namespace TaskManagerApp
             panel.Children.Add(taskNameTextBox);
             panel.Children.Add(deadlineDatePicker);
             panel.Children.Add(deadlineTimePicker);
+            panel.Children.Add(errorTextBlock); // Add error text block
             editTaskDialog.Content = panel;
 
             // Handle dialog buttons
@@ -190,19 +198,18 @@ namespace TaskManagerApp
                 // Validate task name
                 if (string.IsNullOrWhiteSpace(taskNameTextBox.Text))
                 {
-                    // Show error message if task name is empty
-                    var errorDialog = new ContentDialog
-                    {
-                        Title = "Error",
-                        Content = "Please enter a task name.",
-                        CloseButtonText = "OK"
-                    };
-                    await errorDialog.ShowAsync();
+                    // Set error message below the text box
+                    errorTextBlock.Text = "Please enter a task name.";
+                    args.Cancel = true; // Prevent dialog from closing
                     return;
                 }
 
-                // Convert DateTimeOffset to DateTime
+                // Combine date and time into a single DateTime
                 DateTime deadline = deadlineDatePicker.Date.DateTime;
+                if (deadlineTimePicker.SelectedTime.HasValue)
+                {
+                    deadline = deadline.Date + deadlineTimePicker.SelectedTime.Value;
+                }
 
                 // Update the selected task in the database
                 DataAccess.UpdateTask(taskToEdit.Id, taskNameTextBox.Text, deadline);
@@ -215,7 +222,8 @@ namespace TaskManagerApp
             await editTaskDialog.ShowAsync();
         }
 
-        
+
+
 
         private async void ViewDeadline_Click(object sender, RoutedEventArgs e)
         {

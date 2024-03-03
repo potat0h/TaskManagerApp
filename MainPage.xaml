@@ -52,7 +52,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:Task">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind TaskName}" VerticalAlignment="Center" TextWrapping="Wrap" Width="1630"/>
+                            <TextBlock Text="{x:Bind TaskName}" VerticalAlignment="Center" TextWrapping="Wrap" Width="1660"/>
                             <Button Content="View Deadline" Click="ViewDeadline_Click" Tag="{Binding Deadline}" Margin="5"/>
                             <Button Click="Edit_Click" HorizontalAlignment="Right" Margin="5">
                                 <SymbolIcon Symbol="Edit" />
