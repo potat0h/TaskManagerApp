@@ -133,7 +133,6 @@ namespace TaskManagerApp
 
         private async void Edit_Click(object sender, RoutedEventArgs e)
         {
-            // Get the task to edit from the sender (assuming sender is a Button)
             Button editButton = sender as Button;
             Task taskToEdit = editButton.DataContext as Task;
 
@@ -243,11 +242,6 @@ namespace TaskManagerApp
 
                 await deadlineDialog.ShowAsync();
             }
-            else
-            {
-                // Handle the case where deadline is not set
-                // You can show a message or take other appropriate action
-            }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -266,7 +260,7 @@ namespace TaskManagerApp
         private void MarkAsComplete_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            // Update the task's completion status (e.g., by appending a marker to indicate completion)
+            // Update the task's completion status
             Task task = button.DataContext as Task;
 
             if (task.IsComplete == 0)
