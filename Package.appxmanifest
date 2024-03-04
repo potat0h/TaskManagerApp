@@ -7,7 +7,7 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="aaaaaeeeee"
+    Name="TaskManager"
     Publisher="CN=Nikola"
     Version="1.0.1.0" />
 
@@ -15,7 +15,7 @@
 
   <Properties>
     <DisplayName>TaskManagerApp</DisplayName>
-    <PublisherDisplayName>nikol</PublisherDisplayName>
+    <PublisherDisplayName>Nikola</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
